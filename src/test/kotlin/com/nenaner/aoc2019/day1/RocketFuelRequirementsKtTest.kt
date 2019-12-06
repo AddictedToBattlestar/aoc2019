@@ -1,4 +1,4 @@
-package com.nenaner.aoc2019.rocketFuelRequirements
+package com.nenaner.aoc2019.day1
 
 import io.kotlintest.extensions.TestListener
 import io.kotlintest.shouldBe

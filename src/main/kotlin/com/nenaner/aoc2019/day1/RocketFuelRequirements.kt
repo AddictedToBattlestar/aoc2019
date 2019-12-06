@@ -1,4 +1,4 @@
-package com.nenaner.aoc2019.rocketFuelRequirements
+package com.nenaner.aoc2019.day1
 
 import com.nenaner.aoc2019.FileManager
 import org.springframework.stereotype.Component
@@ -27,7 +27,7 @@ class RocketFuelRequirements (private val fileManager: FileManager) {
     }
 
     companion object {
-        const val fileNameContainingMassValues = "massValuesForRocketModules.in"
+        const val fileNameContainingMassValues = "day1.massValuesForRocketModules.in"
     }
 }
 
