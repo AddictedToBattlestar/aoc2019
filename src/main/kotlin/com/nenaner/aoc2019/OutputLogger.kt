@@ -8,24 +8,19 @@ import java.time.format.DateTimeFormatter
 @Component
 class OutputLogger {
     fun debug(message: String) {
-        val timeStamp = DateTimeFormatter
-                .ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")
-                .withZone(ZoneOffset.UTC)
-                .format(Instant.now())
-        println("$timeStamp, debug: $message")
+        println("${getCurrentTimeStampString()}, debug: $message")
     }
     fun info(message: String) {
-        val timeStamp = DateTimeFormatter
-                .ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")
-                .withZone(ZoneOffset.UTC)
-                .format(Instant.now())
-        println("$timeStamp, info: $message")
+        println("${getCurrentTimeStampString()}, info: $message")
     }
     fun warning(message: String) {
-        val timeStamp = DateTimeFormatter
+        println("${getCurrentTimeStampString()}, WARNING: $message")
+    }
+
+    fun getCurrentTimeStampString(): String {
+        return DateTimeFormatter
                 .ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")
                 .withZone(ZoneOffset.UTC)
                 .format(Instant.now())
-        println("$timeStamp, WARNING: $message")
     }
 }
