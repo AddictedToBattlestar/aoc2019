@@ -10,11 +10,17 @@ class OutputLogger {
     fun debug(message: String) {
         println("${getCurrentTimeStampString()}, debug: $message")
     }
+
     fun info(message: String) {
         println("${getCurrentTimeStampString()}, info: $message")
     }
+
     fun warning(message: String) {
-        println("${getCurrentTimeStampString()}, WARNING: $message")
+        println("${getCurrentTimeStampString()}, warning: $message")
+    }
+
+    fun error(message: String) {
+        println("${getCurrentTimeStampString()}, ERROR: $message")
     }
 
     fun getCurrentTimeStampString(): String {
