@@ -1,11 +1,14 @@
 package com.nenaner.aoc2019.day7
 
+import com.nenaner.aoc2019.OutputLogger
 import io.kotlintest.extensions.TestListener
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 import io.kotlintest.spring.SpringListener
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.mockito.InjectMocks
+import org.mockito.Spy
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 
@@ -15,9 +18,20 @@ internal class AmplifierArrayWithFeedbackLoopTest : StringSpec() {
         return listOf(SpringListener)
     }
 
-    // TODO: Need to work on changing this to @InjectMocks.
-    // The tests are not getting a clean instance each run in the current setup
-    @Autowired
+    @Spy
+    private lateinit var outputLogger: OutputLogger
+    @Spy
+    private lateinit var amplifierA: Amplifier
+    @Spy
+    private lateinit var amplifierB: Amplifier
+    @Spy
+    private lateinit var amplifierC: Amplifier
+    @Spy
+    private lateinit var amplifierD: Amplifier
+    @Spy
+    private lateinit var amplifierE: Amplifier
+
+    @InjectMocks
     private lateinit var subject: AmplifierArray
 
     init {

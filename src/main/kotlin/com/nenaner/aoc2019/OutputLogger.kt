@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter
 @Component
 class OutputLogger {
     fun debug(message: String) {
-        println("${getCurrentTimeStampString()}, debug: $message")
+//        println("${getCurrentTimeStampString()}, debug: $message")
     }
 
     fun info(message: String) {
