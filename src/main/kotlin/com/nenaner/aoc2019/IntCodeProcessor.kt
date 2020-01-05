@@ -13,7 +13,7 @@ class IntCodeProcessor @Autowired constructor(private val outputLogger: OutputLo
     }
 
     fun processInitialInputAgainstProvidedIntCode(intCode: String, initialInput: String?): IntCodeProcessingState {
-        val initialInputs = if (initialInput == null) mutableListOf() else mutableListOf(initialInput.toInt())
+        val initialInputs = if (initialInput == null) mutableListOf() else mutableListOf(initialInput.toLong())
         val intCodeProcessingState = IntCodeProcessingState(initialInputs, intCode)
         this.processIntCode(intCodeProcessingState)
         return intCodeProcessingState
@@ -21,91 +21,116 @@ class IntCodeProcessor @Autowired constructor(private val outputLogger: OutputLo
 
     fun processIntCode(intCodeProcessingState: IntCodeProcessingState) {
         intCodeProcessingState.outputEncountered = false
-        while (!intCodeProcessingState.hasInstructionPointerGoneOutOfBounds()
-                && !intCodeProcessingState.terminationEncountered
-                && !intCodeProcessingState.outputEncountered) {
+        while (!intCodeProcessingState.haltStateEncountered()) {
             processOpCode(intCodeProcessingState)
         }
     }
 
     private fun processOpCode(intCodeProcessingState: IntCodeProcessingState) {
-        val (opCode, firstParameterMode, secondParameterMode) = getOpCodeAndParameters(intCodeProcessingState.getCurrentInstruction())
-        when (opCode) {
-            OpCodes.INPUT.value -> {
-                val locationToSaveInput = intCodeProcessingState.getValuesOfSingleInstructionOperation()
-//                val inputValue = getInputValue()
+        val opCodeWithParameterModes = OpCodeWithParameterModes.generateOpCodeWithParameterModes(intCodeProcessingState.getCurrentInstruction())
+        when (opCodeWithParameterModes.opCode) {
+            OpCode.ADDITION -> {
+                val (value1, value2, valueResult) = intCodeProcessingState.getValuesOfThreeInstructionOperation()
+                val firstNumberOfOperation = getValueFromParameter(opCodeWithParameterModes.firstParameterMode, value1, intCodeProcessingState)
+                val secondNumberOfOperation = getValueFromParameter(opCodeWithParameterModes.secondParameterMode, value2, intCodeProcessingState)
+                val locationToSaveResult = getLocationForResult(opCodeWithParameterModes.thirdParameterMode, valueResult, intCodeProcessingState)
+                val result = firstNumberOfOperation + secondNumberOfOperation
+                intCodeProcessingState.setInstruction(locationToSaveResult, result)
+                intCodeProcessingState.moveInstructionPointer(4)
+            }
+            OpCode.MULTIPLICATION -> {
+                val (value1, value2, valueResult) = intCodeProcessingState.getValuesOfThreeInstructionOperation()
+                val firstNumberOfOperation = getValueFromParameter(opCodeWithParameterModes.firstParameterMode, value1, intCodeProcessingState)
+                val secondNumberOfOperation = getValueFromParameter(opCodeWithParameterModes.secondParameterMode, value2, intCodeProcessingState)
+                val locationToSaveResult = getLocationForResult(opCodeWithParameterModes.thirdParameterMode, valueResult, intCodeProcessingState)
+                val result = firstNumberOfOperation * secondNumberOfOperation
+                intCodeProcessingState.setInstruction(locationToSaveResult, result)
+                intCodeProcessingState.moveInstructionPointer(4)
+            }
+            OpCode.INPUT -> {
+                val valueResult = intCodeProcessingState.getValuesOfSingleInstructionOperation()
+                val locationToSaveInput = getLocationForResult(opCodeWithParameterModes.firstParameterMode, valueResult, intCodeProcessingState)
+                //                val inputValue = getInputValue()
                 val inputValue = intCodeProcessingState.popInputValue()
                 if (inputValue == null) {
                     throw IntCodeInputProcessingException("Input opCode encountered with no input received.")
                 } else {
                     outputLogger.info("Input opCode encountered.  Automatically inputting $inputValue.")
-                    intCodeProcessingState.intCodeArray[locationToSaveInput] = inputValue
+                    intCodeProcessingState.setInstruction(locationToSaveInput, inputValue)
                 }
                 intCodeProcessingState.moveInstructionPointer(2)
             }
-            OpCodes.OUTPUT.value -> {
-                val location1 = intCodeProcessingState.getValuesOfSingleInstructionOperation()
-                val outputValue = intCodeProcessingState.intCodeArray[location1]
+            OpCode.OUTPUT -> {
+                val value1 = intCodeProcessingState.getValuesOfSingleInstructionOperation()
+                val outputValue = getValueFromParameter(opCodeWithParameterModes.firstParameterMode, value1, intCodeProcessingState)
                 intCodeProcessingState.outputValues.add(outputValue)
                 outputLogger.debug("Output opCode encountered.  The value found to output is: $outputValue")
                 intCodeProcessingState.moveInstructionPointer(2)
                 intCodeProcessingState.outputEncountered = true
             }
-            OpCodes.ADDITION.value -> {
-                val (value1, value2, valueResult) = intCodeProcessingState.getValuesOfThreeInstructionOperation()
-                val firstNumberOfOperation = if (firstParameterMode == IMMEDIATE_MODE) value1 else intCodeProcessingState.intCodeArray[value1]
-                val secondNumberOfOperation = if (secondParameterMode == IMMEDIATE_MODE) value2 else intCodeProcessingState.intCodeArray[value2]
-                val result = firstNumberOfOperation + secondNumberOfOperation
-                intCodeProcessingState.intCodeArray[valueResult] = result
-                intCodeProcessingState.moveInstructionPointer(4)
-            }
-            OpCodes.MULTIPLICATION.value -> {
-                val (value1, value2, valueResult) = intCodeProcessingState.getValuesOfThreeInstructionOperation()
-                val firstNumberOfOperation = if (firstParameterMode == IMMEDIATE_MODE) value1 else intCodeProcessingState.intCodeArray[value1]
-                val secondNumberOfOperation = if (secondParameterMode == IMMEDIATE_MODE) value2 else intCodeProcessingState.intCodeArray[value2]
-                val result = firstNumberOfOperation * secondNumberOfOperation
-                intCodeProcessingState.intCodeArray[valueResult] = result
-                intCodeProcessingState.moveInstructionPointer(4)
-            }
-            OpCodes.LESS_THAN.value -> {
-                val (value1, value2, valueResult) = intCodeProcessingState.getValuesOfThreeInstructionOperation()
-                val firstNumberOfOperation = if (firstParameterMode == IMMEDIATE_MODE) value1 else intCodeProcessingState.intCodeArray[value1]
-                val secondNumberOfOperation = if (secondParameterMode == IMMEDIATE_MODE) value2 else intCodeProcessingState.intCodeArray[value2]
-                intCodeProcessingState.intCodeArray[valueResult] = if (firstNumberOfOperation < secondNumberOfOperation) 1 else 0
-                intCodeProcessingState.moveInstructionPointer(4)
-            }
-            OpCodes.EQUALS.value -> {
-                val (value1, value2, valueResult) = intCodeProcessingState.getValuesOfThreeInstructionOperation()
-                val firstNumberOfOperation = if (firstParameterMode == IMMEDIATE_MODE) value1 else intCodeProcessingState.intCodeArray[value1]
-                val secondNumberOfOperation = if (secondParameterMode == IMMEDIATE_MODE) value2 else intCodeProcessingState.intCodeArray[value2]
-                intCodeProcessingState.intCodeArray[valueResult] = if (firstNumberOfOperation == secondNumberOfOperation) 1 else 0
-                intCodeProcessingState.moveInstructionPointer(4)
-            }
-            OpCodes.JUMP_IF_TRUE.value -> {
+            OpCode.JUMP_IF_TRUE -> {
                 val (value1, value2) = intCodeProcessingState.getValuesOfTwoInstructionOperation()
-                val firstNumberOfOperation = if (firstParameterMode == IMMEDIATE_MODE) value1 else intCodeProcessingState.intCodeArray[value1]
-                val secondNumberOfOperation = if (secondParameterMode == IMMEDIATE_MODE) value2 else intCodeProcessingState.intCodeArray[value2]
-                if (firstNumberOfOperation != 0)
+                val firstNumberOfOperation = getValueFromParameter(opCodeWithParameterModes.firstParameterMode, value1, intCodeProcessingState)
+                val secondNumberOfOperation = getValueFromParameter(opCodeWithParameterModes.secondParameterMode, value2, intCodeProcessingState)
+                if (firstNumberOfOperation != 0L)
                     intCodeProcessingState.jumpInstructionPointer(secondNumberOfOperation)
                 else
                     intCodeProcessingState.moveInstructionPointer(3)
             }
-            OpCodes.JUMP_IF_FALSE.value -> {
+            OpCode.JUMP_IF_FALSE -> {
                 val (value1, value2) = intCodeProcessingState.getValuesOfTwoInstructionOperation()
-                val firstNumberOfOperation = if (firstParameterMode == IMMEDIATE_MODE) value1 else intCodeProcessingState.intCodeArray[value1]
-                val secondNumberOfOperation = if (secondParameterMode == IMMEDIATE_MODE) value2 else intCodeProcessingState.intCodeArray[value2]
-                if (firstNumberOfOperation == 0)
+                val firstNumberOfOperation = getValueFromParameter(opCodeWithParameterModes.firstParameterMode, value1, intCodeProcessingState)
+                val secondNumberOfOperation = getValueFromParameter(opCodeWithParameterModes.secondParameterMode, value2, intCodeProcessingState)
+                if (firstNumberOfOperation == 0L)
                     intCodeProcessingState.jumpInstructionPointer(secondNumberOfOperation)
                 else
                     intCodeProcessingState.moveInstructionPointer(3)
             }
-            OpCodes.TERMINATION.value -> {
+            OpCode.LESS_THAN -> {
+                val (value1, value2, valueResult) = intCodeProcessingState.getValuesOfThreeInstructionOperation()
+                val firstNumberOfOperation = getValueFromParameter(opCodeWithParameterModes.firstParameterMode, value1, intCodeProcessingState)
+                val secondNumberOfOperation = getValueFromParameter(opCodeWithParameterModes.secondParameterMode, value2, intCodeProcessingState)
+                val locationToSaveResult = getLocationForResult(opCodeWithParameterModes.thirdParameterMode, valueResult, intCodeProcessingState)
+                intCodeProcessingState.setInstruction(locationToSaveResult, if (firstNumberOfOperation < secondNumberOfOperation) 1 else 0)
+                intCodeProcessingState.moveInstructionPointer(4)
+            }
+            OpCode.EQUALS -> {
+                val (value1, value2, valueResult) = intCodeProcessingState.getValuesOfThreeInstructionOperation()
+                val firstNumberOfOperation = getValueFromParameter(opCodeWithParameterModes.firstParameterMode, value1, intCodeProcessingState)
+                val secondNumberOfOperation = getValueFromParameter(opCodeWithParameterModes.secondParameterMode, value2, intCodeProcessingState)
+                val locationToSaveResult = getLocationForResult(opCodeWithParameterModes.thirdParameterMode, valueResult, intCodeProcessingState)
+
+                intCodeProcessingState.setInstruction(locationToSaveResult, if (firstNumberOfOperation == secondNumberOfOperation) 1 else 0)
+                intCodeProcessingState.moveInstructionPointer(4)
+            }
+            OpCode.RELATIVE_BASE_ADJUSTMENT -> {
+                val value1 = intCodeProcessingState.getValuesOfSingleInstructionOperation()
+                val offsetValue = getValueFromParameter(opCodeWithParameterModes.firstParameterMode, value1, intCodeProcessingState)
+                intCodeProcessingState.adjustBaseOffset(offsetValue)
+                intCodeProcessingState.moveInstructionPointer(2)
+            }
+            OpCode.TERMINATION -> {
                 outputLogger.info("Termination opCode encountered.  Halting intCode processing.")
                 intCodeProcessingState.terminationEncountered = true
             }
+        }
+    }
+
+    private fun getLocationForResult(parameterMode: ParameterMode, value1: Long, intCodeProcessingState: IntCodeProcessingState): Long {
+        return when (parameterMode) {
+            ParameterMode.RELATIVE_MODE -> value1 + intCodeProcessingState.relativeBase
+            ParameterMode.POSITION_MODE -> value1
             else -> {
-                throw Exception("Invalid opCodeProvided: $opCode, position ${intCodeProcessingState.instructionPointer}")
+                throw Exception("Invalid parameter mode provided.  parameterMode: $parameterMode")
             }
+        }
+    }
+
+    private fun getValueFromParameter(parameterMode: ParameterMode, value: Long, intCodeProcessingState: IntCodeProcessingState): Long {
+        return when (parameterMode) {
+            ParameterMode.RELATIVE_MODE -> intCodeProcessingState.getInstruction(value + intCodeProcessingState.relativeBase)
+            ParameterMode.POSITION_MODE -> intCodeProcessingState.getInstruction(value)
+            ParameterMode.IMMEDIATE_MODE -> value
         }
     }
 
@@ -114,29 +139,5 @@ class IntCodeProcessor @Autowired constructor(private val outputLogger: OutputLo
         val enteredString = readLine()
         return enteredString?.toIntOrNull()
                 ?: throw InputMismatchException("The input of $enteredString was not a numeric value")
-    }
-
-    private fun getOpCodeAndParameters(opCodeWithParameterModes: Int): Triple<Int, Int, Int> {
-        val secondParameterMode = opCodeWithParameterModes / 1000
-        val firstParameterMode = opCodeWithParameterModes / 100 % 10
-        val opCode = opCodeWithParameterModes % 100
-        return Triple(opCode, firstParameterMode, secondParameterMode)
-    }
-
-    companion object {
-        const val IMMEDIATE_MODE = 1
-        const val POSITION_MODE = 0
-
-        enum class OpCodes(val value: Int) {
-            ADDITION(1),
-            MULTIPLICATION(2),
-            INPUT(3),
-            OUTPUT(4),
-            JUMP_IF_TRUE(5),
-            JUMP_IF_FALSE(6),
-            LESS_THAN(7),
-            EQUALS(8),
-            TERMINATION(99)
-        }
     }
 }

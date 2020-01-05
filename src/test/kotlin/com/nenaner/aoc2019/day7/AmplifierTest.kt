@@ -7,19 +7,16 @@ import io.kotlintest.extensions.TestListener
 import io.kotlintest.specs.StringSpec
 import io.kotlintest.spring.SpringListener
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Test
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Spy
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-internal class AmplifierTest : StringSpec() {
-    override fun listeners(): List<TestListener> {
-        return listOf(SpringListener)
-    }
-
+internal class AmplifierTest {
     @Spy
-    private lateinit var fileManager: FileManager
+    private var fileManager = FileManager()
     @Mock
     private lateinit var intCodeProcessor: IntCodeProcessor
     @Mock
@@ -28,10 +25,8 @@ internal class AmplifierTest : StringSpec() {
     @InjectMocks
     private lateinit var subject: Amplifier
 
-    init {
-        "basic existence assertion" {
-            assertNotNull(subject)
-
-        }
+    @Test
+    internal fun `basic existence assertion`() {
+        assertNotNull(subject)
     }
 }

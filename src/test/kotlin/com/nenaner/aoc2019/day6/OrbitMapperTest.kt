@@ -1,8 +1,10 @@
 package com.nenaner.aoc2019.day6
 
 import com.nenaner.aoc2019.FileManager
-import com.nhaarman.mockitokotlin2.spy
 import io.kotlintest.shouldBe
+import io.mockk.MockKAnnotations
+import io.mockk.impl.annotations.InjectMockKs
+import io.mockk.impl.annotations.SpyK
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -10,14 +12,14 @@ import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
 internal class OrbitMapperTest {
-    private lateinit var fileManager: FileManager
+    @SpyK
+    private var fileManager = FileManager()
+
+    @InjectMockKs
     private lateinit var subject: OrbitMapper
 
     @BeforeEach
-    internal fun setUp() {
-        fileManager = spy()
-        subject = OrbitMapper(fileManager)
-    }
+    fun setUp() = MockKAnnotations.init(this)
 
     @Test
     @DisplayName("It returns 42 from the sample orbit map (part 1)")

@@ -9,7 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
 internal class RocketFuelRequirementsKtTest : StringSpec() {
-
     override fun listeners(): List<TestListener> {
         return listOf(SpringListener)
     }

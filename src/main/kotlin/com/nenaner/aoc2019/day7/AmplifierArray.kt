@@ -14,7 +14,7 @@ class AmplifierArray @Autowired constructor(private var outputLogger: OutputLogg
                                             private val amplifierD: Amplifier,
                                             private val amplifierE: Amplifier) {
 
-    fun initializeAmplifiers(initialPhaseSettingSequence: List<Int>, intCodeData: String) {
+    fun initializeAmplifiersAlongWithCustomIntCode(initialPhaseSettingSequence: List<Long>, intCodeData: String) {
         amplifierA.initializeAmplifier("Amplifier A", initialPhaseSettingSequence[0], intCodeData)
         amplifierB.initializeAmplifier("Amplifier B", initialPhaseSettingSequence[1], intCodeData)
         amplifierC.initializeAmplifier("Amplifier C", initialPhaseSettingSequence[2], intCodeData)
@@ -22,7 +22,7 @@ class AmplifierArray @Autowired constructor(private var outputLogger: OutputLogg
         amplifierE.initializeAmplifier("Amplifier E", initialPhaseSettingSequence[4], intCodeData)
     }
 
-    fun initializeAmplifiers(initialPhaseSettingSequence: List<Int>) {
+    fun initializeAmplifiersAlongWithCustomIntCode(initialPhaseSettingSequence: List<Long>) {
         amplifierA.initializeAmplifier("Amplifier A", initialPhaseSettingSequence[0], null)
         amplifierB.initializeAmplifier("Amplifier B", initialPhaseSettingSequence[1], null)
         amplifierC.initializeAmplifier("Amplifier C", initialPhaseSettingSequence[2], null)
@@ -30,8 +30,8 @@ class AmplifierArray @Autowired constructor(private var outputLogger: OutputLogg
         amplifierE.initializeAmplifier("Amplifier E", initialPhaseSettingSequence[4], null)
     }
 
-    fun processPhaseSettingSequence(): Int? {
-        var outputFromAmplifier = 0
+    fun processPhaseSettingSequence(): Long? {
+        var outputFromAmplifier = 0L
         for (amplifier in listOf(amplifierA, amplifierB, amplifierC, amplifierD, amplifierE)) {
             outputFromAmplifier = amplifier.processIntCode(outputFromAmplifier)
         }
@@ -39,10 +39,10 @@ class AmplifierArray @Autowired constructor(private var outputLogger: OutputLogg
         return outputFromAmplifier
     }
 
-    fun processPhaseSettingSequenceWithFeedbackLoop(): Int? {
+    fun processPhaseSettingSequenceWithFeedbackLoop(): Long? {
         var intCodeProcessingState: IntCodeProcessingState?
         var intCodeProcessingStateAmplifierE: IntCodeProcessingState? = null
-        var outputFromAmplifier = 0
+        var outputFromAmplifier = 0L
         try {
             var continueProcessing = true
             while (continueProcessing) {

@@ -1,29 +1,27 @@
 package com.nenaner.aoc2019.day5
 
 import com.nenaner.aoc2019.OutputLogger
-import com.nhaarman.mockitokotlin2.argumentCaptor
 import io.kotlintest.shouldBe
+import io.mockk.MockKAnnotations
+import io.mockk.impl.annotations.InjectMockKs
+import io.mockk.impl.annotations.SpyK
+import io.mockk.verify
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.mockito.InjectMocks
-import org.mockito.Mockito.verify
-import org.mockito.MockitoAnnotations
-import org.mockito.Spy
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
 internal class DiagnosticProgramTest {
-    @Spy
-    private lateinit var outputLoggerSpy: OutputLogger
+    @SpyK
+    private var outputLoggerMock = OutputLogger()
 
-    @InjectMocks
+    @InjectMockKs
     private lateinit var subject: DiagnosticProgram
 
     @BeforeEach
-    internal fun setUp() {
-        MockitoAnnotations.initMocks(this)
-    }
+    fun setUp() = MockKAnnotations.init(this)
 
     @Test
     @DisplayName("'1,0,0,0,99' becomes '2,0,0,0,99'")
@@ -72,10 +70,9 @@ internal class DiagnosticProgramTest {
     internal fun variation9() {
         subject.processInitialInput("3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9", "0")
 
-        argumentCaptor<String>().apply {
-            verify(outputLoggerSpy).info(capture())
-            firstValue.shouldBe("0")
-        }
+        val list = mutableListOf<String>()
+        verify { outputLoggerMock.info(capture(list)) }
+        assertEquals("0", list[0])
     }
 
     @Test
@@ -83,10 +80,9 @@ internal class DiagnosticProgramTest {
     internal fun variation10() {
         subject.processInitialInput("3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9", "42")
 
-        argumentCaptor<String>().apply {
-            verify(outputLoggerSpy).info(capture())
-            firstValue.shouldBe("1")
-        }
+        val list = mutableListOf<String>()
+        verify { outputLoggerMock.info(capture(list)) }
+        assertEquals("1", list[0])
     }
 
     @Test
@@ -94,10 +90,9 @@ internal class DiagnosticProgramTest {
     internal fun variation11() {
         subject.processInitialInput("3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9", "-5")
 
-        argumentCaptor<String>().apply {
-            verify(outputLoggerSpy).info(capture())
-            firstValue.shouldBe("1")
-        }
+        val list = mutableListOf<String>()
+        verify { outputLoggerMock.info(capture(list)) }
+        assertEquals("1", list[0])
     }
 
     @Test
@@ -105,10 +100,9 @@ internal class DiagnosticProgramTest {
     internal fun variation12() {
         subject.processInitialInput("3,3,1105,-1,9,1101,0,0,12,4,12,99,1", "0")
 
-        argumentCaptor<String>().apply {
-            verify(outputLoggerSpy).info(capture())
-            firstValue.shouldBe("0")
-        }
+        val list = mutableListOf<String>()
+        verify { outputLoggerMock.info(capture(list)) }
+        assertEquals("0", list[0])
     }
 
     @Test
@@ -116,10 +110,9 @@ internal class DiagnosticProgramTest {
     internal fun variation13() {
         subject.processInitialInput("3,3,1105,-1,9,1101,0,0,12,4,12,99,1", "42")
 
-        argumentCaptor<String>().apply {
-            verify(outputLoggerSpy).info(capture())
-            firstValue.shouldBe("1")
-        }
+        val list = mutableListOf<String>()
+        verify { outputLoggerMock.info(capture(list)) }
+        assertEquals("1", list[0])
     }
 
     @Test

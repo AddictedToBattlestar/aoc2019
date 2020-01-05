@@ -1,66 +1,64 @@
 package com.nenaner.aoc2019.day7
 
+import com.nenaner.aoc2019.FileManager
+import com.nenaner.aoc2019.IntCodeProcessor
 import com.nenaner.aoc2019.OutputLogger
-import io.kotlintest.extensions.TestListener
 import io.kotlintest.shouldBe
-import io.kotlintest.specs.StringSpec
-import io.kotlintest.spring.SpringListener
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Test
-import org.mockito.InjectMocks
-import org.mockito.Spy
-import org.springframework.beans.factory.annotation.Autowired
+import io.mockk.impl.annotations.SpyK
+import org.junit.jupiter.api.*
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-internal class AmplifierArrayWithFeedbackLoopTest : StringSpec() {
-    override fun listeners(): List<TestListener> {
-        return listOf(SpringListener)
-    }
+internal class AmplifierArrayWithFeedbackLoopTest {
+    @SpyK
+    private val outputLoggerSpy = OutputLogger()
 
-    @Spy
-    private lateinit var outputLogger: OutputLogger
-    @Spy
     private lateinit var amplifierA: Amplifier
-    @Spy
     private lateinit var amplifierB: Amplifier
-    @Spy
     private lateinit var amplifierC: Amplifier
-    @Spy
     private lateinit var amplifierD: Amplifier
-    @Spy
     private lateinit var amplifierE: Amplifier
-
-    @InjectMocks
     private lateinit var subject: AmplifierArray
 
-    init {
-        "9,8,7,6,5 should generate a result of 43210" {
-            subject.initializeAmplifiers(listOf(9, 8, 7, 6, 5), "3,26,1001,26,-4,26,3,27,1002,27,2,27,1,27,26,27,4,27,1001,28,-1,28,1005,28,6,99,0,0,5")
-            subject.processPhaseSettingSequenceWithFeedbackLoop().shouldBe(139629729)
-        }
-        "9,7,8,5,6 should generate a result of 43210" {
-            subject.initializeAmplifiers(listOf(9, 7, 8, 5, 6), "3,52,1001,52,-5,52,3,53,1,52,56,54,1007,54,5,55,1005,55,26,1001,54,-5,54,1105,1,12,1,53,54,53,1008,54,0,55,1001,55,1,55,2,53,55,53,4,53,1001,56,-1,56,1005,56,6,99,0,0,0,0,10")
-            subject.processPhaseSettingSequenceWithFeedbackLoop().shouldBe(18216)
-        }
+    @BeforeEach
+    internal fun setUp() {
+        amplifierA = setupAmplifier()
+        amplifierB = setupAmplifier()
+        amplifierC = setupAmplifier()
+        amplifierD = setupAmplifier()
+        amplifierE = setupAmplifier()
+        subject = AmplifierArray(outputLoggerSpy, amplifierA, amplifierB, amplifierC, amplifierD, amplifierE)
     }
 
     @Test
+    internal fun `9,8,7,6,5 should generate a result of 43210`() {
+        subject.initializeAmplifiersAlongWithCustomIntCode(listOf(9, 8, 7, 6, 5), "3,26,1001,26,-4,26,3,27,1002,27,2,27,1,27,26,27,4,27,1001,28,-1,28,1005,28,6,99,0,0,5")
+        subject.processPhaseSettingSequenceWithFeedbackLoop().shouldBe(139629729)
+    }
+
+    @Test
+    internal fun `9,7,8,5,6 should generate a result of 18216`() {
+        subject.initializeAmplifiersAlongWithCustomIntCode(listOf(9, 7, 8, 5, 6), "3,52,1001,52,-5,52,3,53,1,52,56,54,1007,54,5,55,1005,55,26,1001,54,-5,54,1105,1,12,1,53,54,53,1008,54,0,55,1001,55,1,55,2,53,55,53,4,53,1001,56,-1,56,1005,56,6,99,0,0,0,0,10")
+        subject.processPhaseSettingSequenceWithFeedbackLoop().shouldBe(18216)
+    }
+
+    @Test
+    @Disabled
     internal fun allPermutations() {
-        val results = mutableListOf<Pair<List<Int>, Int>>()
-        var highestResult = 0
-        for (a in 5..9)
-            for (b in 5..9)
-                for (c in 5..9)
-                    for (d in 5..9)
-                        for (e in 5..9) {
+        val results = mutableListOf<Pair<List<Long>, Long>>()
+        var highestResult = 0L
+        for (a in 5L..9L)
+            for (b in 5L..9L)
+                for (c in 5L..9L)
+                    for (d in 5L..9L)
+                        for (e in 5L..9L) {
                             val phaseSetting = listOf(a, b, c, d, e)
                             if (noMoreThanOneOfEach(phaseSetting)) {
                                 println("Attempting $a,$b,$c,$d,$e")
-                                subject.initializeAmplifiers(phaseSetting)
+                                subject.initializeAmplifiersAlongWithCustomIntCode(phaseSetting)
                                 val potentialResult = subject.processPhaseSettingSequenceWithFeedbackLoop()
                                 if (potentialResult != null) {
-                                    val result: Int = potentialResult
+                                    val result: Long = potentialResult
                                     println("Processed $a,$b,$c,$d,$e with a result of $result")
                                     results.add(Pair(phaseSetting, result))
                                     if (result > highestResult) highestResult = result
@@ -72,12 +70,18 @@ internal class AmplifierArrayWithFeedbackLoopTest : StringSpec() {
         Assertions.assertTrue(results.isNotEmpty())
     }
 
-    private fun noMoreThanOneOfEach(phaseSetting: List<Int>): Boolean {
-        val countOfFives = phaseSetting.filter { it == 5 }.size
-        val countOfSixes = phaseSetting.filter { it == 6 }.size
-        val countOfSevens = phaseSetting.filter { it == 7 }.size
-        val countOfEights = phaseSetting.filter { it == 8 }.size
-        val countOfNines = phaseSetting.filter { it == 9 }.size
+    private fun noMoreThanOneOfEach(phaseSetting: List<Long>): Boolean {
+        val countOfFives = phaseSetting.filter { it == 5L }.size
+        val countOfSixes = phaseSetting.filter { it == 6L }.size
+        val countOfSevens = phaseSetting.filter { it == 7L }.size
+        val countOfEights = phaseSetting.filter { it == 8L }.size
+        val countOfNines = phaseSetting.filter { it == 9L }.size
         return countOfFives < 2 && countOfSixes < 2 && countOfSevens < 2 && countOfEights < 2 && countOfNines < 2
+    }
+
+    private fun setupAmplifier(): Amplifier {
+        val intCodeProcessor = IntCodeProcessor(outputLoggerSpy)
+        val fileManager = FileManager()
+        return Amplifier(intCodeProcessor, outputLoggerSpy, fileManager)
     }
 }

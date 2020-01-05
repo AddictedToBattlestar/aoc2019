@@ -22,7 +22,6 @@ internal class IntCodeProcessorTest : StringSpec() {
     @InjectMocks
     private lateinit var subject: IntCodeProcessor
 
-
     init {
         "'1,0,0,0,99' becomes '2,0,0,0,99'" {
             subject.processIntCode("1,0,0,0,99").shouldBe("2,0,0,0,99")
@@ -48,9 +47,8 @@ internal class IntCodeProcessorTest : StringSpec() {
             }
         }
         "'3,3,1,0,32,7,99,0 (with an input entered of 5)' becomes '3,3,1,5,5,7,99,12'" {
-            val intCodeProcessingResult = subject.processInitialInputAgainstProvidedIntCode("3,3,1,0,5,7,99,0", "5")
-
-            assertEquals("3,3,1,5,5,7,99,14", intCodeProcessingResult.getIntCodeAsString())
+            subject.processInitialInputAgainstProvidedIntCode("3,3,1,0,5,7,99,0", "5").getIntCodeAsString()
+                    .shouldBe("3,3,1,5,5,7,99,14")
         }
         "'3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9 (with an input entered of 0)' generates the output '0'" {
             val intCodeProcessingResult = subject.processInitialInputAgainstProvidedIntCode("3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9", "0")

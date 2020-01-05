@@ -17,7 +17,8 @@ class Amplifier @Autowired constructor(private var intCodeProcessor: IntCodeProc
     private var intCodeProcessingState: IntCodeProcessingState = IntCodeProcessingState(mutableListOf())
     var identifier = "Generic amplifier"
 
-    fun initializeAmplifier(identifier: String, initialPhaseSetting: Int, customIntCode: String?) {
+    fun initializeAmplifier(identifier: String, initialPhaseSetting: Long, customIntCode: String?) {
+        intCodeProcessingState.haltOnWhenOutputEncountered = true
         this.identifier = identifier
         intCodeProcessingState.resetEverything()
         intCodeProcessingState.pushInputValue(initialPhaseSetting)
@@ -27,15 +28,15 @@ class Amplifier @Autowired constructor(private var intCodeProcessor: IntCodeProc
             outputLogger.info("$identifier - initialized, initialPhaseSetting: $initialPhaseSetting, intCode initialized with default content from file")
         } else {
             intCodeProcessingState.resetIntCode(customIntCode)
-            outputLogger.info("$identifier - initialized, initialPhaseSetting: $initialPhaseSetting, intCode initialized with custom contenct from file")
+            outputLogger.info("$identifier - initialized, initialPhaseSetting: $initialPhaseSetting, intCode initialized with custom content from file")
         }
     }
 
-    fun processIntCode(inputValue: Int?): Int {
+    fun processIntCode(inputValue: Long?): Long {
         return processIntCodeReturningState(inputValue).getLastOutputValue()
     }
 
-    fun processIntCodeReturningState(inputValue: Int?): IntCodeProcessingState {
+    fun processIntCodeReturningState(inputValue: Long?): IntCodeProcessingState {
         if (inputValue != null) {
             outputLogger.info("$identifier - inputValue: $inputValue")
             intCodeProcessingState.pushInputValue(inputValue)

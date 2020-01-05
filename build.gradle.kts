@@ -27,12 +27,13 @@ dependencies {
 	}
 	testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
 	testImplementation("io.kotlintest:kotlintest-extensions-spring:3.4.2")
-	testImplementation("org.mockito:mockito-all:1.10.19")
-	testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
+	testImplementation("io.mockk:mockk:1.9.3")
 }
 
 tasks.withType<Test> {
-	useJUnitPlatform()
+	useJUnitPlatform {
+		excludeTags("manual")
+	}
 }
 
 tasks.withType<KotlinCompile> {
