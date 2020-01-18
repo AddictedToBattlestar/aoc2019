@@ -6,6 +6,8 @@ import com.nenaner.aoc2019.OutputLogger
 import io.kotlintest.matchers.types.shouldNotBeNull
 import io.kotlintest.shouldBe
 import io.mockk.MockKAnnotations
+import io.mockk.impl.annotations.InjectMockKs
+import io.mockk.impl.annotations.SpyK
 import org.junit.jupiter.api.*
 import org.mockito.InjectMocks
 import org.mockito.Spy
@@ -13,10 +15,10 @@ import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
 internal class IntCodeProcessorTestDay9 {
-    @Spy
-    private lateinit var outputLoggerSpy: OutputLogger
+    @SpyK
+    private var outputLoggerSpy = OutputLogger()
 
-    @InjectMocks
+    @InjectMockKs
     private lateinit var subject: IntCodeProcessor
 
     private var intCodeProcessingState: IntCodeProcessingState = IntCodeProcessingState(mutableListOf())

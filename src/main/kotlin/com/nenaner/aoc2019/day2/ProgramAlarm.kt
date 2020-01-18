@@ -1,11 +1,12 @@
 package com.nenaner.aoc2019.day2
 
 import com.nenaner.aoc2019.FileManager
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.lang.Exception
 
 @Component
-class ProgramAlarm(private val fileManager: FileManager) {
+class ProgramAlarm @Autowired constructor(private val fileManager: FileManager) {
     fun processIntCodeFromFileForDesirableOutcome(desiredValue: Int): Pair<Int?, Int?> {
         val fileContent = fileManager.readFileAsLinesUsingGetResourceAsStream(fileNameContainingIntCodes).toMutableList()
         var intCodes = fileContent[0].split(',').map { it.toInt() }.toMutableList()

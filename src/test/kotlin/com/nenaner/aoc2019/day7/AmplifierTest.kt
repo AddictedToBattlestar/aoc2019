@@ -6,7 +6,12 @@ import com.nenaner.aoc2019.OutputLogger
 import io.kotlintest.extensions.TestListener
 import io.kotlintest.specs.StringSpec
 import io.kotlintest.spring.SpringListener
+import io.mockk.MockKAnnotations
+import io.mockk.impl.annotations.InjectMockKs
+import io.mockk.impl.annotations.MockK
+import io.mockk.impl.annotations.SpyK
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.InjectMocks
 import org.mockito.Mock
@@ -15,15 +20,18 @@ import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
 internal class AmplifierTest {
-    @Spy
+    @SpyK
     private var fileManager = FileManager()
-    @Mock
+    @MockK
     private lateinit var intCodeProcessor: IntCodeProcessor
-    @Mock
+    @MockK
     private lateinit var outputLogger: OutputLogger
 
-    @InjectMocks
+    @InjectMockKs
     private lateinit var subject: Amplifier
+
+    @BeforeEach
+    fun setUp() = MockKAnnotations.init(this)
 
     @Test
     internal fun `basic existence assertion`() {

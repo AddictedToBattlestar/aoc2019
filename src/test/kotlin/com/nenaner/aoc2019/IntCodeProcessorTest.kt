@@ -8,6 +8,7 @@ import io.kotlintest.spring.SpringListener
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.mockito.InjectMocks
 import org.mockito.Spy
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
@@ -16,10 +17,7 @@ internal class IntCodeProcessorTest : StringSpec() {
         return listOf(SpringListener)
     }
 
-    @Spy
-    private lateinit var outputLoggerSpy: OutputLogger
-
-    @InjectMocks
+    @Autowired
     private lateinit var subject: IntCodeProcessor
 
     init {
