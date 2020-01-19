@@ -17,7 +17,7 @@ class BroadeningSweepScan @Autowired constructor(private val asteroidMapHelper: 
         do {
             val continueSweeps = sweepScan.performSweep(sweepRadius++)
         } while (continueSweeps)
-//        asteroidMapHelper.printAsteroidMap(tallyMap)
+        asteroidMapHelper.printAsteroidMap(tallyMap)
         val totalNumberVisible = getAsteroidCount(tallyMap)
         return totalNumberVisible
     }

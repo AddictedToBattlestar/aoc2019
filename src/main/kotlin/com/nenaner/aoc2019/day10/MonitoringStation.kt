@@ -44,6 +44,15 @@ class MonitoringStation @Autowired constructor(private val outputLogger: OutputL
         return result
     }
 
+    fun vaporizeAsteroids(asteroidMapAsString: String): Map<Int, Pair<Int,Int>> {
+        val asteroidsVaporizedInOrder = mutableMapOf<Int, Pair<Int,Int>>()
+
+        val asteroidMap = asteroidMapHelper.generateAsteroidMap(asteroidMapAsString)
+        asteroidMapHelper.printAsteroidMap(asteroidMap)
+
+        return asteroidsVaporizedInOrder
+    }
+
     companion object {
         const val asteroidMarker = '#'
         const val emptySpaceMarker = '.'

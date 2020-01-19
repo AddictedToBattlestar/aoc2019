@@ -7,16 +7,16 @@ import java.time.format.DateTimeFormatter
 
 @Component
 class OutputLogger {
+    var currentLoggingLevel: LoggingLevel = LoggingLevel.INFO
+
     fun debug(message: String) {
-//        println("${getCurrentTimeStampString()}, debug: $message")
+        if (currentLoggingLevel == LoggingLevel.DEBUG)
+            println("${getCurrentTimeStampString()}, debug: $message")
     }
 
     fun info(message: String) {
-        println("${getCurrentTimeStampString()}, info: $message")
-    }
-
-    fun warning(message: String) {
-        println("${getCurrentTimeStampString()}, warning: $message")
+        if (currentLoggingLevel == LoggingLevel.DEBUG || currentLoggingLevel == LoggingLevel.INFO)
+            println("${getCurrentTimeStampString()}, info: $message")
     }
 
     fun error(message: String) {
@@ -28,5 +28,13 @@ class OutputLogger {
                 .ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")
                 .withZone(ZoneOffset.UTC)
                 .format(Instant.now())
+    }
+
+    companion object {
+        enum class LoggingLevel {
+            DEBUG,
+            INFO,
+            ERROR
+        }
     }
 }

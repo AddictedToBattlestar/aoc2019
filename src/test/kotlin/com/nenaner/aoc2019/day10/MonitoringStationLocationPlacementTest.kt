@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-internal class MonitoringStationTest {
+internal class MonitoringStationLocationPlacementTest {
     @SpyK
     private var outputLoggerSpy = OutputLogger()
     @SpyK
@@ -153,6 +153,7 @@ internal class MonitoringStationTest {
 
     @Test
     internal fun `part 1, example 5`() {
+        outputLoggerSpy.currentLoggingLevel = OutputLogger.Companion.LoggingLevel.INFO
         val asteroidMap =
                 ".#..##.###...#######\n" +
                         "##.############..##.\n" +
@@ -182,6 +183,7 @@ internal class MonitoringStationTest {
 
     @Test
     internal fun `part 1`() {
+        outputLoggerSpy.currentLoggingLevel = OutputLogger.Companion.LoggingLevel.INFO
         val asteroidMap =
                 ".##.#.#....#.#.#..##..#.#.\n" +
                         "#.##.#..#.####.##....##.#.\n" +
