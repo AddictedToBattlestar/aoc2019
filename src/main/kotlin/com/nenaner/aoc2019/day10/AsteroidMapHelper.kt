@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component
 
 @Component
 class AsteroidMapHelper @Autowired constructor(private val outputLogger: OutputLogger) {
+    var spacing = 3
+
     fun generateAsteroidMap(asteroidMapAsString: String): Array<Array<Char>> {
         val asteroidMapList = mutableListOf<Array<Char>>()
         for (mapLine in asteroidMapAsString.lines()) {
@@ -19,7 +21,7 @@ class AsteroidMapHelper @Autowired constructor(private val outputLogger: OutputL
         for (rowIndex in asteroidMap.indices) {
             val mapRow = asteroidMap[rowIndex]
             for (columnIndex in mapRow.indices) {
-                result += mapRow[columnIndex].toString().padStart(3, ' ')
+                result += mapRow[columnIndex].toString().padStart(this.spacing, ' ')
             }
             result += "\n"
         }
@@ -31,7 +33,7 @@ class AsteroidMapHelper @Autowired constructor(private val outputLogger: OutputL
         for (rowIndex in asteroidMap.indices) {
             val mapRow = asteroidMap[rowIndex]
             for (columnIndex in mapRow.indices) {
-                result += mapRow[columnIndex].toString().padStart(3, ' ')
+                result += mapRow[columnIndex].toString().padStart(this.spacing, ' ')
             }
             result += "\n"
         }

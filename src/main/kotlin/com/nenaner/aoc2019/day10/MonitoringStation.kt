@@ -8,6 +8,10 @@ import org.springframework.stereotype.Component
 class MonitoringStation @Autowired constructor(private val outputLogger: OutputLogger,
                                                private val broadeningSweepScan: BroadeningSweepScan,
                                                private val asteroidMapHelper: AsteroidMapHelper) {
+    init {
+        asteroidMapHelper.spacing = 4
+    }
+
     fun findBestLocation(asteroidMapAsString: String): Triple<Int, Int, Int> {
         val asteroidMap = asteroidMapHelper.generateAsteroidMap(asteroidMapAsString)
         asteroidMapHelper.printAsteroidMap(asteroidMap)
