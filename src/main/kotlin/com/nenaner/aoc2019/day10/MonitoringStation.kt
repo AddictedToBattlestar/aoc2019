@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component
 @Component
 class MonitoringStation @Autowired constructor(private val outputLogger: OutputLogger,
                                                private val broadeningSweepScan: BroadeningSweepScan,
+                                               private val monitoringStationGiantLaser: MonitoringStationGiantLaser,
                                                private val asteroidMapHelper: AsteroidMapHelper) {
     fun findBestLocation(asteroidMapAsString: String): Triple<Int, Int, Int> {
         val asteroidMap = asteroidMapHelper.generateAsteroidMap(asteroidMapAsString)
@@ -50,8 +51,11 @@ class MonitoringStation @Autowired constructor(private val outputLogger: OutputL
         val asteroidMap = asteroidMapHelper.generateAsteroidMap(asteroidMapAsString)
         asteroidMapHelper.printAsteroidMap(asteroidMap)
 
+        val destructionMap = monitoringStationGiantLaser.destroyAllAsteroids(asteroidMap)
+
         return asteroidsVaporizedInOrder
     }
+
 
     companion object {
         const val asteroidMarker = '#'

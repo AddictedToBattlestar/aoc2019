@@ -27,7 +27,7 @@ internal class MonitoringStationLocationPlacementTest {
     @Test
     internal fun `vertical test`() {
         val asteroidMap =
-                        "..#..\n" +
+                "..#..\n" +
                         ".....\n" +
                         "..#..\n" +
                         ".....\n" +
@@ -41,7 +41,7 @@ internal class MonitoringStationLocationPlacementTest {
     @Test
     internal fun `horizontal test`() {
         val asteroidMap =
-                        ".....\n" +
+                ".....\n" +
                         ".....\n" +
                         "#.#.#\n" +
                         ".....\n" +
@@ -55,7 +55,7 @@ internal class MonitoringStationLocationPlacementTest {
     @Test
     internal fun `diagonal test 1`() {
         val asteroidMap =
-                        "#....\n" +
+                "#....\n" +
                         ".....\n" +
                         "..#..\n" +
                         ".....\n" +
@@ -69,7 +69,7 @@ internal class MonitoringStationLocationPlacementTest {
     @Test
     internal fun `diagonal test 2`() {
         val asteroidMap =
-                        "....#\n" +
+                "....#\n" +
                         ".....\n" +
                         "..#..\n" +
                         ".....\n" +

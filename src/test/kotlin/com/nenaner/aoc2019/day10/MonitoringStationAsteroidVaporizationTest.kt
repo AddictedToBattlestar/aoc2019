@@ -17,7 +17,7 @@ internal class MonitoringStationAsteroidVaporizationTest {
     @SpyK
     private var asteroidMapHelperSpy = AsteroidMapHelper(outputLoggerSpy)
     @SpyK
-    private var broadeningSweepScan = BroadeningSweepScan(asteroidMapHelperSpy, outputLoggerSpy)
+    private var monitoringStationGiantLaser = MonitoringStationGiantLaser()
 
     @InjectMockKs
     private lateinit var subject: MonitoringStation
