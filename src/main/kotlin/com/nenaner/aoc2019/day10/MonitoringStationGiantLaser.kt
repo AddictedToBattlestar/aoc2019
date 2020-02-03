@@ -29,6 +29,5 @@ class MonitoringStationGiantLaser {
 }
 
 private class AsteroidsAlongGivenBearing(val bearing: Double) {
-    // distance, x, y, isVaporized
-    val asteroidsByDistance = mutableMapOf<Float, Triple<Int, Int, Boolean>>()
+    val asteroidsByDistance = mutableMapOf<Float, Pair<Int, Int>>()
 }
