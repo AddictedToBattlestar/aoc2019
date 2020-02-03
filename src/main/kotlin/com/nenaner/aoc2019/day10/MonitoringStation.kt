@@ -51,7 +51,7 @@ class MonitoringStation @Autowired constructor(private val outputLogger: OutputL
         val asteroidMap = asteroidMapHelper.generateAsteroidMap(asteroidMapAsString)
         asteroidMapHelper.printAsteroidMap(asteroidMap)
 
-        val destructionMap = monitoringStationGiantLaser.destroyAllAsteroids(asteroidMap)
+        val sequenceForDestructionOfAsteroids: Map<Int, Pair<Int, Int>> = monitoringStationGiantLaser.destroyAllAsteroids(asteroidMap)
 
         return asteroidsVaporizedInOrder
     }
